@@ -2949,19 +2949,43 @@ BaseType_t xTaskIncrementTick( void )
                      * list. */
 										
 										//todo add with new deadline
-                    prvAddTaskToReadyList( pxTCB );
+                    #if (configUSE_EDF_SCHEDULER==1)
+											{
+														TickType_t removedTask;
+														TickType_t currentTask;		
+														listSET_LIST_ITEM_VALUE(&((pxTCB)->xStateListItem),(pxTCB)->xTaskPeriod+xTaskGetTickCountFromISR());
+														
+														removedTask=listGET_LIST_ITEM_VALUE( &( pxTCB->xStateListItem ) );
+														
+														currentTask=listGET_LIST_ITEM_VALUE( &( pxCurrentTCB->xStateListItem ) );
+												
+														if(removedTask<currentTask){
+															xSwitchRequired = pdTRUE;
+															
+														}
+														else
+                            {
+                                mtCOVERAGE_TEST_MARKER();
+                            }
+											}
+												#endif
+														
+										prvAddTaskToReadyList( pxTCB );
 										//todo since we added a task to the ready list we must do context switching
 
                     /* A task being unblocked cannot cause an immediate
                      * context switch if preemption is turned off. */
-                    #if ( configUSE_PREEMPTION == 1 )
+                    #if ( configUSE_PREEMPTION == 1 && configUSE_EDF_SCHEDULER==0 )
                         {
                             /* Preemption is on, but a context switch should
                              * only be performed if the unblocked task has a
                              * priority that is equal to or higher than the
-                             * currently executing task. */
-                            if( pxTCB->uxPriority >= pxCurrentTCB->uxPriority )
+                             * currently executing task.
+														 * this needs to be disabled in the case of edf to prevent context switch based on priority*/
+                            
+													if( pxTCB->uxPriority >= pxCurrentTCB->uxPriority )
                             {
+																
                                 xSwitchRequired = pdTRUE;
                             }
                             else
@@ -3607,6 +3631,8 @@ static portTASK_FUNCTION( prvIdleTask, pvParameters )
 
         #if ( ( configUSE_PREEMPTION == 1 ) && ( configIDLE_SHOULD_YIELD == 1 ) )
             {
+							#if (configUSE_EDF_SCHEDULER==0)
+								{ 
                 /* When using preemption tasks of equal priority will be
                  * timesliced.  If a task that is sharing the idle priority is ready
                  * to run then the idle task should yield before the end of the
@@ -3624,9 +3650,16 @@ static portTASK_FUNCTION( prvIdleTask, pvParameters )
                 {
                     mtCOVERAGE_TEST_MARKER();
                 }
+							}
+							#else
+							{
+								//since the idle task is the task now running we can access its TCB from the pxCurrentTCB
+								listSET_LIST_ITEM_VALUE(&((pxCurrentTCB)->xStateListItem),(pxCurrentTCB)->xTaskPeriod+xTaskGetTickCount());
+							}
+							#endif /* configUSE_EDF_SCHEDULER==0*/
             }
         #endif /* ( ( configUSE_PREEMPTION == 1 ) && ( configIDLE_SHOULD_YIELD == 1 ) ) */
-
+				
         #if ( configUSE_IDLE_HOOK == 1 )
             {
                 extern void vApplicationIdleHook( void );
