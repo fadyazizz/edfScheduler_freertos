@@ -3612,7 +3612,7 @@ static portTASK_FUNCTION( prvIdleTask, pvParameters )
      * the idle task is responsible for deleting the task's secure context, if
      * any. */
     portALLOCATE_SECURE_CONTEXT( configMINIMAL_SECURE_STACK_SIZE );
-
+	vTaskSetApplicationTaskTag(NULL, (void *)0);
     for( ; ; )
     {
         /* See if any tasks have deleted themselves - if so then the idle task
