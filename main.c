@@ -191,6 +191,7 @@ void Uart_Receiver(void* pvParamaters){
 void Load_1_Simulation(void* pvParamaters){
 	int i=0;
 	TickType_t xLastWakeTime=xTaskGetTickCount();
+	vTaskSetApplicationTaskTag(NULL, (void *)1);
 	for(;;){
 		for(i=0;i<33333;i++){
 			i=i;
