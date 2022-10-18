@@ -201,6 +201,20 @@ void Load_1_Simulation(void* pvParamaters){
 		
 	}
 }
+
+void Load_2_Simulation(void* pvParamaters){
+	int i=0;
+	TickType_t xLastWakeTime=xTaskGetTickCount();
+	for(;;){
+		for(i=0;i<45500;i++){
+			i=i;
+		}
+		GPIO_write(PORT_0,PIN6,PIN_IS_LOW);
+		vTaskDelayUntil(&xLastWakeTime,100);
+		GPIO_write(PORT_0,PIN6,PIN_IS_HIGH);
+		
+	}
+}
 /*
  * Application entry point:
  * Starts all the other tasks, then starts the scheduler. 
@@ -258,7 +272,15 @@ int main( void )
                     ( void * ) 1,    /* Parameter passed into the task. */
                     1,/* Priority at which the task is created. */
                     &loadSimulation1,
-										10);									
+										10);
+	xTaskPeriodicCreate(
+                    Load_2_Simulation,       /* Function that implements the task. */
+                    "Load_2_Simulation",          /* Text name for the task. */
+                    100,      /* Stack size in words, not bytes. */
+                    ( void * ) 1,    /* Parameter passed into the task. */
+                    1,/* Priority at which the task is created. */
+                    &loadSimulation2,
+										100);
 	
 	/* Now all the tasks have been started - start the scheduler.
 
