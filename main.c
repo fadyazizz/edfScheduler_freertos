@@ -99,16 +99,16 @@ char button1RisingEdgeString[30]="rising edge button 1 \n";
 char button1fallinfEdgeString[30]="falling edge button 1 \n";
 void Button_1_Monitor(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
+	int didEdgeRise=0;
 	for( ;; )
     {
      pinState_t button1Value= GPIO_read(PORT_1,PIN0);
-			if(button1Value == (pinState_t) 1 && button1RisingEdge == 0){
+			if(button1Value == (pinState_t) 1 && didEdgeRise == 0){
+				didEdgeRise=1;
 				button1RisingEdge=1;
-				
-				button1FallingEdge=0;
 			}
-			if(button1Value == (pinState_t) 0 && button1FallingEdge == 0){
-				button1RisingEdge=0;
+			if(button1Value == (pinState_t) 0 && didEdgeRise== 1){
+				didEdgeRise=0;
 				button1FallingEdge=1;
 				
 			}
@@ -125,13 +125,17 @@ char button2RisingEdgeString[30]="rising edge button 2 \n";
 char button2fallinfEdgeString[30]="falling edge button 2 \n";
 void Button_2_Monitor(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
+	int didEdgeRise=0;
 	for( ;; )
     {
+			
      pinState_t button2Value= GPIO_read(PORT_1,PIN1);
-			if(button2Value==1 &&button2RisingEdge==0){
+			if(button2Value==1 && didEdgeRise==0){
+				didEdgeRise=1;
 				button2RisingEdge=1;
 			}
-			if(button2Value==0 && button2FallingEdge==0){
+			if(button2Value==0 && didEdgeRise==1){
+				didEdgeRise=0;
 				button2FallingEdge=1;
 			}
 			GPIO_write(PORT_0,PIN2,PIN_IS_LOW);
@@ -158,17 +162,19 @@ void Uart_Receiver(void* pvParamaters){
 	for( ;; )
     {
 			if(button1RisingEdge==1){
+				button1RisingEdge=0;
 				vSerialPutString(button1RisingEdgeString,strlen(button1RisingEdgeString));
 			}
 			if(button1FallingEdge==1){
+				button1FallingEdge=0;
 				vSerialPutString(button1fallinfEdgeString,strlen(button1fallinfEdgeString));
 			}
 			if(button2RisingEdge==1){
-				//button2RisingEdge=0;
+				button2RisingEdge=0;
 				vSerialPutString(button2RisingEdgeString,strlen(button2RisingEdgeString));
 			}
 			if(button2FallingEdge==1){
-				//button2FallingEdge=0;
+				button2FallingEdge=0;
 				vSerialPutString(button2fallinfEdgeString,strlen(button2fallinfEdgeString));
 			}
 			if(periodicTransmitFlag==1){
@@ -181,6 +187,20 @@ void Uart_Receiver(void* pvParamaters){
 			GPIO_write(PORT_0,PIN4,PIN_IS_HIGH);
 		}
 }
+
+void Load_1_Simulation(void* pvParamaters){
+	int i=0;
+	TickType_t xLastWakeTime=xTaskGetTickCount();
+	for(;;){
+		for(i=0;i<33333;i++){
+			i=i;
+		}
+		GPIO_write(PORT_0,PIN5,PIN_IS_LOW);
+		vTaskDelayUntil(&xLastWakeTime,10);
+		GPIO_write(PORT_0,PIN5,PIN_IS_HIGH);
+		
+	}
+}
 /*
  * Application entry point:
  * Starts all the other tasks, then starts the scheduler. 
@@ -190,6 +210,8 @@ TaskHandle_t button1Handler=NULL;
 TaskHandle_t button2Handler=NULL;
 TaskHandle_t periodicTransimitterHandler=NULL;
 TaskHandle_t uartHandler=NULL;
+TaskHandle_t loadSimulation1=NULL;
+TaskHandle_t loadSimulation2=NULL;
 int main( void )
 {
 	/* Setup the hardware for use with the Keil demo board. */
@@ -229,6 +251,14 @@ int main( void )
                     1,/* Priority at which the task is created. */
                     &uartHandler,
 										20);
+	xTaskPeriodicCreate(
+                    Load_1_Simulation,       /* Function that implements the task. */
+                    "Load_1_Simulation",          /* Text name for the task. */
+                    100,      /* Stack size in words, not bytes. */
+                    ( void * ) 1,    /* Parameter passed into the task. */
+                    1,/* Priority at which the task is created. */
+                    &loadSimulation1,
+										10);									
 	
 	/* Now all the tasks have been started - start the scheduler.
 
