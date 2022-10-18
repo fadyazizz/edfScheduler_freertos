@@ -83,6 +83,9 @@
  */
 static void prvSetupHardware( void );
 /*-----------------------------------------------------------*/
+
+int system_time=0;
+int cpu_load=0;
 void vApplicationIdleHook( void ){
 	
 }
@@ -97,6 +100,8 @@ volatile int button1FallingEdge=0;
 
 char button1RisingEdgeString[30]="rising edge button 1 \n";
 char button1fallinfEdgeString[30]="falling edge button 1 \n";
+
+int task_1_in=0, task_1_out=0, task_1_total=0;
 void Button_1_Monitor(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
 	int didEdgeRise=0;
@@ -125,6 +130,8 @@ volatile int button2FallingEdge=0;
 
 char button2RisingEdgeString[30]="rising edge button 2 \n";
 char button2fallinfEdgeString[30]="falling edge button 2 \n";
+
+int task_2_in=0, task_2_out=0, task_2_total=0;
 void Button_2_Monitor(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
 	int didEdgeRise=0;
@@ -151,6 +158,8 @@ void Button_2_Monitor(void* pvParamaters){
 volatile int periodicTransmitFlag=0;
 
 char periodicTransmitString[30]="periodic transmition \n";
+
+int task_3_in=0, task_3_out=0, task_3_total=0;
 void Periodic_Transmitter(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
 	vTaskSetApplicationTaskTag(NULL, (void *)3);
@@ -162,6 +171,7 @@ void Periodic_Transmitter(void* pvParamaters){
 			//GPIO_write(PORT_0,PIN3,PIN_IS_HIGH);
 		}
 }
+int task_4_in=0, task_4_out=0, task_4_total=0;
 void Uart_Receiver(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
 	vTaskSetApplicationTaskTag(NULL, (void *)4);
@@ -193,7 +203,7 @@ void Uart_Receiver(void* pvParamaters){
 			//GPIO_write(PORT_0,PIN4,PIN_IS_HIGH);
 		}
 }
-
+int task_5_in=0, task_5_out=0, task_5_total=0;
 void Load_1_Simulation(void* pvParamaters){
 	int i=0;
 	TickType_t xLastWakeTime=xTaskGetTickCount();
@@ -203,12 +213,12 @@ void Load_1_Simulation(void* pvParamaters){
 			i=i;
 		}
 		//GPIO_write(PORT_0,PIN5,PIN_IS_LOW);
-		vTaskDelayUntil(&xLastWakeTime,10);
+			vTaskDelayUntil(&xLastWakeTime,10);
 		//GPIO_write(PORT_0,PIN5,PIN_IS_HIGH);
 		
 	}
 }
-
+int task_6_in=0, task_6_out=0, task_6_total=0;
 void Load_2_Simulation(void* pvParamaters){
 	int i=0;
 	TickType_t xLastWakeTime=xTaskGetTickCount();
