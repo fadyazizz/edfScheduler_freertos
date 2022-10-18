@@ -100,6 +100,8 @@ char button1fallinfEdgeString[30]="falling edge button 1 \n";
 void Button_1_Monitor(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
 	int didEdgeRise=0;
+	vTaskSetApplicationTaskTag(NULL, (void *)1);
+	
 	for( ;; )
     {
      pinState_t button1Value= GPIO_read(PORT_1,PIN0);
@@ -112,9 +114,9 @@ void Button_1_Monitor(void* pvParamaters){
 				button1FallingEdge=1;
 				
 			}
-			GPIO_write(PORT_0,PIN1,PIN_IS_LOW);
+			//GPIO_write(PORT_0,PIN1,PIN_IS_LOW);
 			vTaskDelayUntil(&xLastWakeTime,50);
-			GPIO_write(PORT_0,PIN1,PIN_IS_HIGH);
+			//GPIO_write(PORT_0,PIN1,PIN_IS_HIGH);
 		}
 }
 
@@ -126,6 +128,8 @@ char button2fallinfEdgeString[30]="falling edge button 2 \n";
 void Button_2_Monitor(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
 	int didEdgeRise=0;
+	vTaskSetApplicationTaskTag(NULL, (void *)2);
+	
 	for( ;; )
     {
 			
@@ -138,9 +142,9 @@ void Button_2_Monitor(void* pvParamaters){
 				didEdgeRise=0;
 				button2FallingEdge=1;
 			}
-			GPIO_write(PORT_0,PIN2,PIN_IS_LOW);
+			//GPIO_write(PORT_0,PIN2,PIN_IS_LOW);
 			vTaskDelayUntil(&xLastWakeTime,50);
-			GPIO_write(PORT_0,PIN2,PIN_IS_HIGH);
+			//GPIO_write(PORT_0,PIN2,PIN_IS_HIGH);
 		}
 }
 
@@ -149,16 +153,18 @@ volatile int periodicTransmitFlag=0;
 char periodicTransmitString[30]="periodic transmition \n";
 void Periodic_Transmitter(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
+	vTaskSetApplicationTaskTag(NULL, (void *)3);
 	for( ;; )
     {
 			periodicTransmitFlag=1;
-			GPIO_write(PORT_0,PIN3,PIN_IS_LOW);
+			//GPIO_write(PORT_0,PIN3,PIN_IS_LOW);
 			vTaskDelayUntil(&xLastWakeTime,100);
-			GPIO_write(PORT_0,PIN3,PIN_IS_HIGH);
+			//GPIO_write(PORT_0,PIN3,PIN_IS_HIGH);
 		}
 }
 void Uart_Receiver(void* pvParamaters){
 	TickType_t xLastWakeTime=xTaskGetTickCount();
+	vTaskSetApplicationTaskTag(NULL, (void *)4);
 	for( ;; )
     {
 			if(button1RisingEdge==1){
@@ -182,23 +188,23 @@ void Uart_Receiver(void* pvParamaters){
 				vSerialPutString(periodicTransmitString,strlen(periodicTransmitString));
 			}
 			
-			GPIO_write(PORT_0,PIN4,PIN_IS_LOW);
+			//GPIO_write(PORT_0,PIN4,PIN_IS_LOW);
 			vTaskDelayUntil(&xLastWakeTime,20);
-			GPIO_write(PORT_0,PIN4,PIN_IS_HIGH);
+			//GPIO_write(PORT_0,PIN4,PIN_IS_HIGH);
 		}
 }
 
 void Load_1_Simulation(void* pvParamaters){
 	int i=0;
 	TickType_t xLastWakeTime=xTaskGetTickCount();
-	vTaskSetApplicationTaskTag(NULL, (void *)1);
+	vTaskSetApplicationTaskTag(NULL, (void *)5);
 	for(;;){
 		for(i=0;i<33333;i++){
 			i=i;
 		}
-		GPIO_write(PORT_0,PIN5,PIN_IS_LOW);
+		//GPIO_write(PORT_0,PIN5,PIN_IS_LOW);
 		vTaskDelayUntil(&xLastWakeTime,10);
-		GPIO_write(PORT_0,PIN5,PIN_IS_HIGH);
+		//GPIO_write(PORT_0,PIN5,PIN_IS_HIGH);
 		
 	}
 }
@@ -206,13 +212,14 @@ void Load_1_Simulation(void* pvParamaters){
 void Load_2_Simulation(void* pvParamaters){
 	int i=0;
 	TickType_t xLastWakeTime=xTaskGetTickCount();
+	vTaskSetApplicationTaskTag(NULL, (void *)6);
 	for(;;){
-		for(i=0;i<45500;i++){
+		for(i=0;i<80000;i++){
 			i=i;
 		}
-		GPIO_write(PORT_0,PIN6,PIN_IS_LOW);
+		//GPIO_write(PORT_0,PIN6,PIN_IS_LOW);
 		vTaskDelayUntil(&xLastWakeTime,100);
-		GPIO_write(PORT_0,PIN6,PIN_IS_HIGH);
+		//GPIO_write(PORT_0,PIN6,PIN_IS_HIGH);
 		
 	}
 }
