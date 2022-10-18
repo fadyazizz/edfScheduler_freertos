@@ -74,47 +74,76 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelayUntil			1
 #define INCLUDE_vTaskDelay				1
 
+
+extern int task_1_in, task_1_out, task_1_total;
+extern int task_2_in, task_2_out, task_2_total;
+extern int task_3_in, task_3_out, task_3_total;
+extern int task_4_in, task_4_out, task_4_total;
+extern int task_5_in, task_5_out, task_5_total;
+extern int task_6_in, task_6_out, task_6_total;
+
+extern int system_time;
+extern int cpu_load;
 #define traceTASK_SWITCHED_OUT() do\
 																	{\
 																	if((int)pxCurrentTCB->pxTaskTag==1){\
-																	GPIO_write(PORT_0,PIN1,PIN_IS_LOW);\
+																		task_1_out=T1TC;\
+																		task_1_total+=(task_1_out-task_1_in);\
+																		GPIO_write(PORT_0,PIN1,PIN_IS_LOW);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==2){\
-																	GPIO_write(PORT_0,PIN2,PIN_IS_LOW);\
+																		task_2_out=T1TC;\
+																		task_2_total+=(task_2_out-task_2_in);\
+																		GPIO_write(PORT_0,PIN2,PIN_IS_LOW);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==3){\
-																	GPIO_write(PORT_0,PIN3,PIN_IS_LOW);\
+																		task_3_out=T1TC;\
+																		task_3_total+=(task_3_out-task_3_in);\
+																		GPIO_write(PORT_0,PIN3,PIN_IS_LOW);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==4){\
-																	GPIO_write(PORT_0,PIN4,PIN_IS_LOW);\
+																		task_4_out=T1TC;\
+																		task_4_total+=(task_4_out-task_4_in);\
+																		GPIO_write(PORT_0,PIN4,PIN_IS_LOW);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==5){\
-																	GPIO_write(PORT_0,PIN5,PIN_IS_LOW);\
+																		task_5_out=T1TC;\
+																		task_5_total+=(task_5_out-task_5_in);\
+																		GPIO_write(PORT_0,PIN5,PIN_IS_LOW);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==6){\
-																	GPIO_write(PORT_0,PIN6,PIN_IS_LOW);\
+																		task_6_out=T1TC;\
+																		task_6_total+=(task_6_out-task_6_in);\
+																		GPIO_write(PORT_0,PIN6,PIN_IS_LOW);\
 																	}\
+																	system_time=T1TC;\
 																}while(0)
 																	
 #define traceTASK_SWITCHED_IN()	do\
 																	{\
 																	if((int)pxCurrentTCB->pxTaskTag==1){\
-																	GPIO_write(PORT_0,PIN1,PIN_IS_HIGH);\
+																		task_1_in=T1TC;\
+																		GPIO_write(PORT_0,PIN1,PIN_IS_HIGH);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==2){\
-																	GPIO_write(PORT_0,PIN2,PIN_IS_HIGH);\
+																		task_2_in=T1TC;\
+																		GPIO_write(PORT_0,PIN2,PIN_IS_HIGH);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==3){\
-																	GPIO_write(PORT_0,PIN3,PIN_IS_HIGH);\
+																		task_3_in=T1TC;\
+																		GPIO_write(PORT_0,PIN3,PIN_IS_HIGH);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==4){\
-																	GPIO_write(PORT_0,PIN4,PIN_IS_HIGH);\
+																		task_4_in=T1TC;\
+																		GPIO_write(PORT_0,PIN4,PIN_IS_HIGH);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==5){\
-																	GPIO_write(PORT_0,PIN5,PIN_IS_HIGH);\
+																		task_5_in=T1TC;\
+																		GPIO_write(PORT_0,PIN5,PIN_IS_HIGH);\
 																	}\
 																	if((int)pxCurrentTCB->pxTaskTag==6){\
-																	GPIO_write(PORT_0,PIN6,PIN_IS_HIGH);\
+																		task_6_in=T1TC;\
+																		GPIO_write(PORT_0,PIN6,PIN_IS_HIGH);\
 																	}\
 																}while(0)
 #define configUSE_APPLICATION_TASK_TAG 1
