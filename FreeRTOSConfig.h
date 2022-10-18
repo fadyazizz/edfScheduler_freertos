@@ -116,7 +116,11 @@ extern int cpu_load;
 																		task_6_total+=(task_6_out-task_6_in);\
 																		GPIO_write(PORT_0,PIN6,PIN_IS_LOW);\
 																	}\
+																	if((int)pxCurrentTCB->pxTaskTag==0){\
+																		GPIO_write(PORT_0,PIN7,PIN_IS_LOW);\
+																	}\
 																	system_time=T1TC;\
+																	cpu_load=((task_1_total+task_2_total+task_3_total+task_4_total+task_5_total+task_6_total)/(float)system_time)*100;\
 																}while(0)
 																	
 #define traceTASK_SWITCHED_IN()	do\
@@ -144,6 +148,9 @@ extern int cpu_load;
 																	if((int)pxCurrentTCB->pxTaskTag==6){\
 																		task_6_in=T1TC;\
 																		GPIO_write(PORT_0,PIN6,PIN_IS_HIGH);\
+																	}\
+																	if((int)pxCurrentTCB->pxTaskTag==0){\
+																		GPIO_write(PORT_0,PIN7,PIN_IS_HIGH);\
 																	}\
 																}while(0)
 #define configUSE_APPLICATION_TASK_TAG 1
